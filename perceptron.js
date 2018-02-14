@@ -118,49 +118,42 @@ var Perceptron = function() {
 }
 
 
-var perc = new Perceptron();
-perc.run([0.05, 0.1], [0.01, 0.99]);
+/* Entradas */
+var inputsTest = [
+    [[0.05, 0.1], [0.01, 0.99]]
+];
 
+var inputsAND = [
+    [[1,1],[0,1]],
+    [[0,0],[1,0]],
+    [[0,1],[1,0]],
+    [[1,0],[1,0]]
+];
 
-// /* Entradas */
-// var inputsAND = [
-//     [[1,1],[1]],
-//     [[0,0],[0]],
-//     [[0,1],[0]],
-//     [[1,0],[0]]
-// ];
+var inputsXOR = [
+    [[1,1],[0,1]],
+    [[0,0],[0,1]],
+    [[0,1],[1,0]],
+    [[1,0],[1,0]]
+];
 
-// var inputsOR = [
-//     [[1,1],[1]],
-//     [[0,0],[0]],
-//     [[0,1],[1]],
-//     [[1,0],[1]]
-// ];
+function rodar(inputs) {
+	/* Execução do algoritmo */
+	var perc = new Perceptron();
+	for (var k = 0;k < 10;k++) {
+		for(var i=0; i<inputs.length; i++) {
+		    perc.run(inputs[i][0], inputs[i][1]);
+		}
+	}
+	return perc.toString();
+}
 
-// var inputsXOR = [
-//     [[1,1],[0]],
-//     [[0,0],[0]],
-//     [[0,1],[1]],
-//     [[1,0],[1]]
-// ];
+console.log("Test values");
+var layersTest = rodar(inputsTest);
 
-// function rodar(inputs) {
-// 	/* Execução do algoritmo */
-// 	var perc = new perceptron();
-// 	for (var k = 0;k < 10;k++) {
-// 		for(var i=0; i<inputs.length; i++) {
-// 		    perc.run(inputs[i][0], inputs[i][1]);
-// 		}
-// 	}
-// 	return perc.toString();
-// }
+console.log("Porta AND");
+var layersAND = rodar(inputsAND);
 
-// console.log("Porta AND");
-// var layersAND = rodar(inputsAND);
-
-// console.log("Porta OR");
-// var layersOR = rodar(inputsOR);
-
-// console.log("Porta XOR");
-// var layersXOR = rodar(inputsXOR);
+console.log("Porta XOR");
+var layersXOR = rodar(inputsXOR);
 
