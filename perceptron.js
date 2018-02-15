@@ -1,48 +1,56 @@
 var Neuron = function(weights, bias) {
-    this.learningRate = 0.5;
-    this.bias = bias;
     this.weights = weights;
 
     this.activationFunction = function(value) {
         return 1/(1+Math.pow(Math.E, -value));
     };
 
-    this.calculateOutput = function(input) {
+    this.calculateOutput = function(input, bias) {
         var output = 0;
         for(var index in this.weights){
             output += this.weights[index] * input[index]
         }
-        return this.activationFunction(output + this.bias);
+        return this.activationFunction(output + bias);
     };
 
-    this.correctionNeuron = function(output, expectedValue, inputs) {
+    this.correctOutputNeuron = function(output, expectedValue, inputs, learningRate) {
+        var error = -(expectedValue - output) * output * (1-output);
+        return correctNeuron(error, inputs, learningRate);
+    };
+
+    this.correctHiddenNeuron = function(output, expectedValue, inputs, learningRate) {
+        var error = expectedValue * output * (1-output)
+        return correctNeuron(error, inputs, learningRate);
+    };
+
+    var correctNeuron = function(error, inputs, learningRate) {
         var erros = [];
         for(var weight in this.weights){
-            var error = this.calculateError(output, expectedValue);
             erros.push(error * this.weights[weight]);
-            this.weights[weight] -= error * inputs[weight] * this.learningRate;
+            this.weights[weight] -= error * inputs[weight] * learningRate;
         }
         return erros;
-    };
-
-    this.calculateError = function(output, expectedValue, input) {
-        return -(expectedValue - output) * output * (1-output);
     }
     
     this.toString = function() {
-    	return 'learningRate: ' + this.learningRate + ' bias: ' + this.bias + ' weights: ' + this.weights;
+    	return ' weights: ' + this.weights;
     };
 }
 
 var Perceptron = function() {
-    this.layers = [];
+    this.layers = [null];
+    this.bias = null;
+    this.learningRate = null;
 
     this.initialize = function() {
+        this.bias = [0.35, 0.6];
+        this.learningRate = 0.5;
         this.layers.push([new Neuron([0.15, 0.20], 0.35), new Neuron([0.25, 0.30], 0.35)]);
         this.layers.push([new Neuron([0.40, 0.45], 0.6), new Neuron([0.50, 0.55], 0.6)]);
     }
 
     this.run = function(input, expectedValue){
+        this.layers[0] = input;
         var outputs = this.feedfoward(input);
         var resultNetwork = outputs[outputs.length-1];
         
@@ -55,12 +63,13 @@ var Perceptron = function() {
 
     this.feedfoward = function(input) {
         var outputs = [];
-        outputs[-1] = input;
-        for(var layer in this.layers) {
+             
+        for(var layer = 1; layer<this.layers.length; layer++) {
             outputs[layer] = [];
             var neurons = this.layers[layer];
+            
             for(var neuron in neurons){
-                outputs[layer].push(neurons[neuron].calculateOutput(input));
+                outputs[layer].push(neurons[neuron].calculateOutput(input, this.bias[layer-1]));
             }
             input = outputs[layer];
         }
@@ -68,21 +77,19 @@ var Perceptron = function() {
     }
 
     this.backpropagation = function(output, expectedValue) {
-
         var backupErros = null;
-        for(var layer = this.layers.length-1; layer>=0; layer--) {
-            var neurons = this.layers[layer];
-            var errors = null;
+        var errorsNeuron = null;
+        var errors = null;
+        for(var layer = this.layers.length-1; layer>0; layer--) {
+            var neurons = this.layers[layer];                      
             
+            var isOutputLayer = layer == this.layers.length-1;
             for(var neuron = 0; neuron<neurons.length; neuron++) {
-                var expected = layer == this.layers.length-1 ? expectedValue[neuron] : backupErros[neuron]*(-1) + output[layer][neuron];
-                var errorsNeuron = neurons[neuron].correctionNeuron(output[layer][neuron], expected, output[layer-1]);
-                if(errors){
-                    errors = sumArrays(errors, errorsNeuron);
-                } else {
-                    errors = errorsNeuron;
-                }
-                
+                if(isOutputLayer)
+                    errorsNeuron = neurons[neuron].correctOutputNeuron(output[layer][neuron], expectedValue[neuron], output[layer-1], this.learningRate);
+                else
+                    errorsNeuron = neurons[neuron].correctHiddenNeuron(output[layer][neuron], backupErros[neuron], output[layer-1], this.learningRate);
+                errors = sumErrorArrays(errors, errorsNeuron);
             }
             backupErros = [].concat(errors);
         }
@@ -104,12 +111,13 @@ var Perceptron = function() {
         return -(expectedValue-output);
     }
 
-    var sumArrays = function(arr1, arr2){
-        if(arr1.length != arr2.length)
-            throw new Exception('Array size different.');
+    var sumErrorArrays = function(erros, newErros){
+        if(erros === null)
+            return newErros;
+
         var arrSum = [];
-        for(var i=0; i<arr1.length; i++) {
-            arrSum.push(arr1[i]+arr2[i]);
+        for(var i=0; i<erros.length; i++) {
+            arrSum.push(erros[i]+newErros[i]);
         }
         return arrSum;
     }
