@@ -3,3 +3,16 @@
     padding: 2rem;
     color: azure;
 }
+
+.content-menu {
+    width: 70%;
+    margin: auto;
+}
+
+.tip {
+    color: #ccc;
+}
+
+.label-form {
+    font-size: 1.2rem;
+}
