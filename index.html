@@ -7,29 +7,22 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link rel="stylesheet" href="index.css">
     <script src="index.js"></script>
+    <script src="perceptron.js"></script>
     <title>Perceptron</title>
 </head>
     <body>
         <h1 class="title">Perceptron</h1>
-        <div id="createNeuralNetworkForm" class="content-menu">
-            <div class="form-group">
-                <label for="neuralNetworkInfo" class="label-form">Informações redes</label>
-                <input type="text" class="form-control" id="neuralNetworkInfo">
-                <span class="tip">Colocar a quantidade de neuronios por camada, separando cada camada por virgula, indicando as layers, exemplo: 5,3,2,1 (4 camadas)</span>
-            </div>
-            <button id="createNeuralNetwork" class="btn btn-success">Criar rede neural</button>        
-        </div>
 
-        <div id="trainNeuralNetworkForm" class="content-menu" style="display: none;">
+        <div id="trainNeuralNetworkForm" class="content-menu">
             <div class="form-group">
-                <div class="label-form">Dados de entrada</div>
-                <textarea id="neuralNetworkInput" cols="50" rows="5"></textarea>
-                <div class="label-form">Dados de saida</div>
+                <div class="label-form">Dados</div>
                 <textarea id="neuralNetworkInput" cols="50" rows="5"></textarea>
                 <div>
-                    <span class="tip">Colocar os dados separados por virgula, e separar o conjunto de dados por ponto e virula, exemplo: 3,2,4; 3,1,2;</span>
+                    <span class="tip">Colocar as estradas separadas por "," e a saida serparada por ";" exemplo: "1,0;1"</span>
                 </div>
             </div>
+            <button id="trainNeuralNetwork" class="btn btn-success">Treinar</button>
         </div>
+        <div id="result"></div>
     </body>
 </html>
